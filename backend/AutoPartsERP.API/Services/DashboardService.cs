@@ -95,22 +95,22 @@ public class DashboardService : IDashboardService
             trend.Add(new MonthlySalesTrendDto
             {
                 Month = mDate.ToString("MMM yyyy"),
-                Sales = sTotal > 0 ? sTotal : (decimal)(new Random().Next(450000, 750000)),
-                Purchases = pTotal > 0 ? pTotal : (decimal)(new Random().Next(300000, 500000)),
-                Expenses = eTotal > 0 ? eTotal : (decimal)(new Random().Next(40000, 80000))
+                Sales = sTotal,
+                Purchases = pTotal,
+                Expenses = eTotal
             });
         }
 
         return ApiResponse<DashboardSummaryDto>.Ok(new DashboardSummaryDto
         {
-            TodaySales = todaySales > 0 ? todaySales : 38450.00m,
-            MonthSales = monthSales > 0 ? monthSales : 685200.00m,
-            TotalReceivable = totalReceivable > 0 ? totalReceivable : 109500.00m,
-            TotalPayable = totalPayable > 0 ? totalPayable : 515000.00m,
-            TotalParts = totalParts > 0 ? totalParts : 7,
-            LowStockCount = lowStockAlerts.Count > 0 ? lowStockAlerts.Count : 2,
-            TodayInvoicesCount = todayInvoicesCount > 0 ? todayInvoicesCount : 14,
-            MonthlyExpense = monthlyExpense > 0 ? monthlyExpense : 48500.00m,
+            TodaySales = todaySales,
+            MonthSales = monthSales,
+            TotalReceivable = totalReceivable,
+            TotalPayable = totalPayable,
+            TotalParts = totalParts,
+            LowStockCount = lowStockAlerts.Count,
+            TodayInvoicesCount = todayInvoicesCount,
+            MonthlyExpense = monthlyExpense,
             LowStockAlerts = lowStockAlerts,
             RecentSales = recentSales,
             MonthlySalesTrend = trend

@@ -309,3 +309,111 @@ public class RecentSaleDto
     public string PaymentStatus { get; set; } = string.Empty;
     public DateTime Date { get; set; }
 }
+
+public class RoleDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string? Description { get; set; }
+}
+
+// --- ACCOUNTING DTOs ---
+public class AssetDto
+{
+    public int Id { get; set; }
+    public string AssetName { get; set; } = string.Empty;
+    public string AssetCode { get; set; } = string.Empty;
+    public decimal CurrentValue { get; set; }
+    public string? Description { get; set; }
+}
+
+public class ExpenseCategoryDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string? Description { get; set; }
+}
+
+public class ExpenseDto
+{
+    public int Id { get; set; }
+    public string ExpenseNumber { get; set; } = string.Empty;
+    public int ExpenseCategoryId { get; set; }
+    public decimal Amount { get; set; }
+    public DateTime ExpenseDate { get; set; }
+    public string? Note { get; set; }
+}
+
+public class IncomeDto
+{
+    public int Id { get; set; }
+    public string IncomeNumber { get; set; } = string.Empty;
+    public string Source { get; set; } = string.Empty;
+    public decimal Amount { get; set; }
+    public DateTime IncomeDate { get; set; }
+    public string? Note { get; set; }
+}
+
+public class LiabilityDto
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string CreditorName { get; set; } = string.Empty;
+    public decimal Amount { get; set; }
+    public decimal PaidAmount { get; set; }
+    public string Status { get; set; } = string.Empty;
+}
+
+public class JournalEntryDto
+{
+    public int Id { get; set; }
+    public string EntryNumber { get; set; } = string.Empty;
+    public DateTime EntryDate { get; set; }
+    public string? Description { get; set; }
+    public decimal TotalAmount { get; set; }
+}
+
+// --- OTHER DTOs ---
+public class WarehouseDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Code { get; set; } = string.Empty;
+    public string? Location { get; set; }
+    public bool IsActive { get; set; }
+}
+
+public class PermissionDto
+{
+    public int Id { get; set; }
+    public string ModuleName { get; set; } = string.Empty;
+    public string ActionName { get; set; } = string.Empty;
+    public string? Description { get; set; }
+}
+
+public class QuotationDto
+{
+    public int Id { get; set; }
+    public string QuotationNumber { get; set; } = string.Empty;
+    public int CustomerId { get; set; }
+    public decimal TotalAmount { get; set; }
+    public DateTime QuotationDate { get; set; }
+}
+
+public class PurchaseReturnDto
+{
+    public int Id { get; set; }
+    public string ReturnNumber { get; set; } = string.Empty;
+    public int SupplierId { get; set; }
+    public decimal TotalAmount { get; set; }
+}
+
+public class SalesReturnDto
+{
+    public int Id { get; set; }
+    public string ReturnNumber { get; set; } = string.Empty;
+    public int CustomerId { get; set; }
+    public decimal TotalAmount { get; set; }
+}
+
+

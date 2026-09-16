@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using AutoPartsERP.API.DTOs;
 using AutoPartsERP.API.DTOs.Common;
 using AutoPartsERP.API.Interfaces;
 
 namespace AutoPartsERP.API.Controllers.Dashboard;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class DashboardController : ControllerBase
@@ -23,3 +25,4 @@ public class DashboardController : ControllerBase
         return Ok(result);
     }
 }
+

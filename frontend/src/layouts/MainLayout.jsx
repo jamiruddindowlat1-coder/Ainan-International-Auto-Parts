@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../components/Sidebar/Sidebar';
 import Navbar from '../components/Navbar/Navbar';
+import Footer from '../components/Footer/Footer';
 
 export default function MainLayout() {
   const [collapsed, setCollapsed] = useState(false);
@@ -14,7 +15,9 @@ export default function MainLayout() {
         <main className="page-wrapper">
           <Outlet />
         </main>
+        <Footer />
       </div>
     </div>
   );
 }
+

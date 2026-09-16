@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using AutoPartsERP.API.DTOs;
 using AutoPartsERP.API.DTOs.Common;
 using AutoPartsERP.API.Interfaces;
 
 namespace AutoPartsERP.API.Controllers.Purchase;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class PurchaseController : ControllerBase
@@ -44,3 +46,4 @@ public class PurchaseController : ControllerBase
         return CreatedAtAction(nameof(GetPurchaseById), new { id = result.Data!.Id }, result);
     }
 }
+

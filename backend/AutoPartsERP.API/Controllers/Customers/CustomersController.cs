@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using AutoPartsERP.API.Data;
 using AutoPartsERP.API.DTOs;
@@ -7,6 +8,7 @@ using AutoPartsERP.API.Models.Partners;
 
 namespace AutoPartsERP.API.Controllers.Partners;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class CustomersController : ControllerBase
@@ -110,3 +112,4 @@ public class CustomersController : ControllerBase
         return Ok(ApiResponse<CustomerDto>.Ok(dto, "Customer updated successfully"));
     }
 }
+

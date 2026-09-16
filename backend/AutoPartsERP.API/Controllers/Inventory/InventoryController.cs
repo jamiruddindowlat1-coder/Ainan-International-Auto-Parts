@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using AutoPartsERP.API.Data;
 using AutoPartsERP.API.DTOs.Common;
@@ -6,6 +7,7 @@ using AutoPartsERP.API.Models.Inventory;
 
 namespace AutoPartsERP.API.Controllers.Inventory;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class InventoryController : ControllerBase
@@ -87,3 +89,4 @@ public class InventoryController : ControllerBase
         return Ok(ApiResponse<List<object>>.Ok(list.Cast<object>().ToList()));
     }
 }
+

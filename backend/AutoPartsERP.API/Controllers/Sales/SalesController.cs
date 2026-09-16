@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using AutoPartsERP.API.DTOs;
 using AutoPartsERP.API.DTOs.Common;
 using AutoPartsERP.API.Interfaces;
 
 namespace AutoPartsERP.API.Controllers.Sales;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class SalesController : ControllerBase
@@ -44,3 +46,4 @@ public class SalesController : ControllerBase
         return CreatedAtAction(nameof(GetSaleById), new { id = result.Data!.Id }, result);
     }
 }
+

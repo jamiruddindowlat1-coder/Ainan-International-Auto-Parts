@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using AutoPartsERP.API.Data;
 using AutoPartsERP.API.DTOs.Common;
@@ -6,6 +7,7 @@ using AutoPartsERP.API.Models.Settings;
 
 namespace AutoPartsERP.API.Controllers.Settings;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class SettingsController : ControllerBase
@@ -51,3 +53,4 @@ public class SettingsController : ControllerBase
         return Ok(ApiResponse<CompanySetting>.Ok(current ?? updated, "Company settings updated successfully"));
     }
 }
+

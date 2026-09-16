@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using AutoPartsERP.API.Interfaces;
 
 namespace AutoPartsERP.API.Controllers.Export;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class ExportController : ControllerBase
@@ -36,3 +38,4 @@ public class ExportController : ControllerBase
         return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", filename);
     }
 }
+

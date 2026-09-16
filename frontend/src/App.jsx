@@ -14,6 +14,8 @@ import InventoryList from './pages/Inventory/InventoryList';
 import AccountingView from './pages/Accounting/AccountingView';
 import ReportsPage from './pages/Reports/ReportsPage';
 import SettingsPage from './pages/Settings/SettingsPage';
+import BrandsList from './pages/Brands/BrandsList';
+import CategoriesList from './pages/Categories/CategoriesList';
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuth();
@@ -50,6 +52,8 @@ export default function App() {
             <Route path="accounting" element={<AccountingView />} />
             <Route path="reports" element={<ReportsPage />} />
             <Route path="settings" element={<SettingsPage />} />
+            <Route path="brands" element={<BrandsList />} />
+            <Route path="categories" element={<CategoriesList />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/dashboard" replace />} />

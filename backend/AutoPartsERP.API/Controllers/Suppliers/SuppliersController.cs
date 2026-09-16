@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using AutoPartsERP.API.Data;
 using AutoPartsERP.API.DTOs;
@@ -7,6 +8,7 @@ using AutoPartsERP.API.Models.Partners;
 
 namespace AutoPartsERP.API.Controllers.Suppliers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class SuppliersController : ControllerBase
@@ -92,3 +94,4 @@ public class SuppliersController : ControllerBase
         return CreatedAtAction(nameof(GetSupplierById), new { id = supplier.Id }, ApiResponse<SupplierDto>.Ok(dto, "Supplier created successfully"));
     }
 }
+

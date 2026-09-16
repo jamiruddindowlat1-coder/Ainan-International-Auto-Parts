@@ -1,4 +1,4 @@
-﻿using Scalar.AspNetCore;
+using Scalar.AspNetCore;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +23,7 @@ builder.Services.AddScoped<ISalesService, SalesService>();
 builder.Services.AddScoped<IPurchaseService, PurchaseService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IExportService, ExportService>();
+builder.Services.AddScoped<IAccountingService, AccountingService>();
 
 // 3. Authentication & JWT
 var jwtSecret = builder.Configuration["JwtSettings:Secret"] ?? "AIAPS_Super_Secret_Key_For_AutoPartsERP_2026_Secure_JWT_Key!";

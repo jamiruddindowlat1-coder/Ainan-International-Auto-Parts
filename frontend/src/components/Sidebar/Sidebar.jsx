@@ -12,7 +12,9 @@ import {
   FiBarChart2,
   FiSettings,
   FiChevronLeft,
-  FiChevronRight
+  FiChevronRight,
+  FiTag,
+  FiLayers
 } from 'react-icons/fi';
 import branding from '../../config/branding';
 
@@ -20,6 +22,8 @@ const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: FiGrid },
   { path: '/pos', label: 'POS Counter', icon: FiShoppingCart, badge: 'Live' },
   { path: '/parts', label: 'Parts Catalog', icon: FiBox },
+  { path: '/brands', label: 'Brands', icon: FiTag },
+  { path: '/categories', label: 'Categories', icon: FiLayers },
   { path: '/sales', label: 'Sales & Invoices', icon: FiShoppingBag },
   { path: '/purchase', label: 'Purchases', icon: FiTruck },
   { path: '/inventory', label: 'Inventory & Stock', icon: FiDatabase },

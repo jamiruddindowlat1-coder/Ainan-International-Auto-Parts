@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using AutoPartsERP.API.Data;
 using AutoPartsERP.API.DTOs.Common;
@@ -22,6 +23,7 @@ public class JournalItemInput
     public string? Description { get; set; }
 }
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class AccountingController : ControllerBase
@@ -357,3 +359,4 @@ public class AccountingController : ControllerBase
         return Ok(ApiResponse<Expense>.Ok(exp, "Expense recorded successfully"));
     }
 }
+

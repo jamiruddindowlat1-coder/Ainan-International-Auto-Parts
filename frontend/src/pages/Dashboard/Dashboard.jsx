@@ -42,33 +42,19 @@ export default function Dashboard() {
         setSummary(res.data.data);
       }
     } catch {
-      // Fallback demo data
+      // Fallback zeroed data in case of error
       setSummary({
-        todaySales: 38450,
-        monthSales: 685200,
-        totalReceivable: 109500,
-        totalPayable: 515000,
-        totalParts: 7,
-        lowStockCount: 2,
-        todayInvoicesCount: 14,
-        monthlyExpense: 48500,
-        monthlySalesTrend: [
-          { month: 'Apr 2026', sales: 520000, purchases: 380000, expenses: 45000 },
-          { month: 'May 2026', sales: 580000, purchases: 410000, expenses: 48000 },
-          { month: 'Jun 2026', sales: 610000, purchases: 450000, expenses: 51000 },
-          { month: 'Jul 2026', sales: 690000, purchases: 480000, expenses: 54000 },
-          { month: 'Aug 2026', sales: 740000, purchases: 520000, expenses: 52000 },
-          { month: 'Sep 2026', sales: 685200, purchases: 490000, expenses: 48500 },
-        ],
-        lowStockAlerts: [
-          { partId: 4, partNumber: 'KYB-SA-33331', partName: 'KYB Front Strut Assembly', currentStock: 2, minStockAlert: 4 },
-          { partId: 6, partNumber: 'AIS-CK-TY01', partName: 'AISIN Clutch Kit HiAce', currentStock: 1, minStockAlert: 3 },
-        ],
-        recentSales: [
-          { invoiceNumber: 'INV-20260901-1021', customerName: 'Apex Auto Garage', totalAmount: 18500, paymentStatus: 'Paid', date: '2026-09-01' },
-          { invoiceNumber: 'INV-20260901-1022', customerName: 'Rahim Motors Wholesale', totalAmount: 42000, paymentStatus: 'Partial', date: '2026-09-01' },
-          { invoiceNumber: 'INV-20260901-1023', customerName: 'Walk-in Counter', totalAmount: 6400, paymentStatus: 'Paid', date: '2026-09-01' },
-        ]
+        todaySales: 0,
+        monthSales: 0,
+        totalReceivable: 0,
+        totalPayable: 0,
+        totalParts: 0,
+        lowStockCount: 0,
+        todayInvoicesCount: 0,
+        monthlyExpense: 0,
+        monthlySalesTrend: [],
+        lowStockAlerts: [],
+        recentSales: []
       });
     } finally {
       setLoading(false);
