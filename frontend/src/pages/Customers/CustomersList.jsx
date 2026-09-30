@@ -32,12 +32,7 @@ export default function CustomersList() {
       const res = await api.get('/customers');
       if (res.data?.data) setCustomers(res.data.data);
     } catch {
-      setCustomers([
-        { id: 1, name: 'Apex Auto Garage', customerType: 'Garage', phone: '+880 1812-345678', email: 'apex@autogarage.com', address: 'Mirpur-10, Dhaka', creditLimit: 150000, currentBalance: 24500 },
-        { id: 2, name: 'Rahim Motors Wholesale', customerType: 'Wholesale', phone: '+880 1913-987654', email: 'rahim@motorsbd.com', address: 'Dholaikhal, Old Dhaka', creditLimit: 500000, currentBalance: 85000 },
-        { id: 3, name: 'Kabir Express Fleet', customerType: 'Corporate', phone: '+880 1715-112233', email: 'fleet@kabirexpress.com', address: 'Mohakhali, Dhaka', creditLimit: 300000, currentBalance: 0 },
-        { id: 4, name: 'Walk-in Customer (Counter)', customerType: 'Retail', phone: '+880 1700-000000', email: 'retail@aiaps.com', address: 'Store Counter', creditLimit: 0, currentBalance: 0 }
-      ]);
+      setCustomers([]);
     } finally {
       setLoading(false);
     }

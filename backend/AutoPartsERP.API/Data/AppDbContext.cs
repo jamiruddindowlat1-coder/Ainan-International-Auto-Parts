@@ -116,6 +116,12 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<User>()
             .HasIndex(u => u.Email).IsUnique();
 
+        // Google login: unique GoogleId, but allow many users with no GoogleId (NULL)
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.GoogleId)
+            .IsUnique()
+            .HasFilter("[GoogleId] IS NOT NULL");
+
         // --- CATALOG ---
         modelBuilder.Entity<Category>()
             .HasIndex(c => c.Name).IsUnique();

@@ -32,11 +32,7 @@ export default function SuppliersList() {
       const res = await api.get('/suppliers');
       if (res.data?.data) setSuppliers(res.data.data);
     } catch {
-      setSuppliers([
-        { id: 1, name: 'Global Auto Parts Trading Dubai', company: 'Global Parts FZE', phone: '+971 4 1234567', email: 'sales@globalpartsfze.ae', address: 'Al Quoz Industrial, Dubai, UAE', currentBalance: 120000 },
-        { id: 2, name: 'Nippon Auto Exports Tokyo', company: 'Nippon Exports Co.', phone: '+81 3 55556666', email: 'orders@nipponexports.jp', address: 'Yokohama, Japan', currentBalance: 350000 },
-        { id: 3, name: 'Bangla Motor Spares Importers', company: 'BMS Importers Ltd.', phone: '+880 2 9887766', email: 'info@bmsimporters.com', address: 'Motijheel, Dhaka', currentBalance: 45000 },
-      ]);
+      setSuppliers([]);
     } finally {
       setLoading(false);
     }

@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { FiLock, FiUser, FiArrowRight } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import branding from '../../config/branding';
+import GoogleLoginButton from '../../components/GoogleLoginButton';
 
 export default function Login() {
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('Admin@123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
@@ -145,6 +146,26 @@ export default function Login() {
             <FiArrowRight />
           </button>
         </form>
+
+        {/* GOOGLE LOGIN */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            margin: '20px 0 16px',
+            color: 'var(--text-muted)',
+            fontSize: '0.78rem',
+          }}
+        >
+          <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+          <span>or</span>
+          <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <GoogleLoginButton />
+        </div>
 
         <div style={{ textAlign: 'center', marginTop: '24px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
           Enterprise Edition &bull; AIAPS ERP v{branding.app.version}

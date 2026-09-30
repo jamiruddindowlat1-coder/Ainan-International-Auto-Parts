@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Google.Apis.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using AutoPartsERP.API.Data;
@@ -13,6 +14,7 @@ namespace AutoPartsERP.API.Services;
 
 public class AuthService : IAuthService
 {
+
     private readonly AppDbContext _context;
     private readonly IConfiguration _config;
 
@@ -35,12 +37,84 @@ public class AuthService : IAuthService
         }
 
         // Simple password check or bcrypt verification (matches demo seed admin)
-        bool isValid = request.Password == "Admin@123" || request.Password == "123456" || user.PasswordHash.Contains(request.Password);
+        bool isValid = false; // Password login disabled: use Google sign-in until proper hashing is implemented
         if (!isValid)
         {
             return ApiResponse<LoginResponseDto>.Fail("Invalid username or password");
         }
 
+        user.LastLoginAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+
+        var roles = user.UserRoles.Select(r => r.Role.Name).ToList();
+        var token = GenerateJwtToken(user, roles);
+
+        return ApiResponse<LoginResponseDto>.Ok(new LoginResponseDto
+        {
+            Token = token,
+            Username = user.Username,
+            FullName = user.FullName,
+            Email = user.Email,
+            Roles = roles,
+            ExpiresAt = DateTime.UtcNow.AddHours(24)
+        }, "Login successful");
+    }
+
+    public async Task<ApiResponse<LoginResponseDto>> GoogleLoginAsync(GoogleLoginRequestDto request)
+    {
+        var clientId = _config["Google:ClientId"];
+        if (string.IsNullOrWhiteSpace(clientId))
+            return ApiResponse<LoginResponseDto>.Fail("Google login is not configured");
+
+        GoogleJsonWebSignature.Payload payload;
+        try
+        {
+            payload = await GoogleJsonWebSignature.ValidateAsync(
+                request.IdToken,
+                new GoogleJsonWebSignature.ValidationSettings { Audience = new[] { clientId } });
+        }
+        catch (InvalidJwtException)
+        {
+            return ApiResponse<LoginResponseDto>.Fail("Invalid Google token");
+        }
+
+        if (!payload.EmailVerified)
+            return ApiResponse<LoginResponseDto>.Fail("Google email is not verified");
+
+        var email = payload.Email.ToLower();
+
+        var user = await _context.Users
+            .Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
+            .FirstOrDefaultAsync(u => u.GoogleId == payload.Subject || u.Email.ToLower() == email);
+
+        if (user == null)
+        {
+            // New user: created inactive, an administrator must approve it
+            user = new User
+            {
+                Username = email,
+                Email = payload.Email,
+                FullName = payload.Name ?? payload.Email,
+                PasswordHash = Guid.NewGuid().ToString("N"),
+                GoogleId = payload.Subject,
+                PictureUrl = payload.Picture,
+                IsActive = false,
+                CreatedAt = DateTime.UtcNow
+            };
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+            return ApiResponse<LoginResponseDto>.Fail("Account created. Waiting for administrator approval.");
+        }
+
+        if (!string.IsNullOrEmpty(user.GoogleId) && user.GoogleId != payload.Subject)
+            return ApiResponse<LoginResponseDto>.Fail("This account is linked to a different Google account");
+
+        if (!user.IsActive)
+            return ApiResponse<LoginResponseDto>.Fail("Account is inactive");
+
+        user.GoogleId = payload.Subject;
+        user.PictureUrl = payload.Picture;
         user.LastLoginAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
 
@@ -128,7 +202,10 @@ public class AuthService : IAuthService
 
     private string GenerateJwtToken(User user, List<string> roles)
     {
-        var secret = _config["JwtSettings:Secret"] ?? "AIAPS_Super_Secret_Key_For_AutoPartsERP_2026_Secure_JWT_Key!";
+        // Empty string in config must also fall back (?? only handles null)
+        var configuredSecret = _config["JwtSettings:Secret"];
+        var secret = string.IsNullOrWhiteSpace(configuredSecret) ? throw new InvalidOperationException("JwtSettings:Secret is not configured.") : configuredSecret;
+
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

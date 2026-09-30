@@ -46,13 +46,7 @@ export default function PartsList() {
       }
     } catch {
       // Demo fallback
-      setParts([
-        { id: 1, partNumber: 'BOS-BP-001', oemNumber: '04465-02220', name: 'Front Ceramic Brake Pad Set', categoryName: 'Brake System', brandName: 'Bosch', unitName: 'Pair', costPrice: 2200, sellingPrice: 3200, wholesalePrice: 2700, totalStock: 45, minStockAlert: 10 },
-        { id: 2, partNumber: 'DEN-SP-IX01', oemNumber: '90919-01210', name: 'Iridium Power Spark Plug (SK20R11)', categoryName: 'Electrical', brandName: 'Denso', unitName: 'Pcs', costPrice: 650, sellingPrice: 950, wholesalePrice: 800, totalStock: 120, minStockAlert: 30 },
-        { id: 3, partNumber: 'MNN-OF-W68', oemNumber: '90915-YZZE1', name: 'Mann Spin-On Engine Oil Filter', categoryName: 'Filtration', brandName: 'Mann-Filter', unitName: 'Pcs', costPrice: 400, sellingPrice: 650, wholesalePrice: 520, totalStock: 95, minStockAlert: 20 },
-        { id: 4, partNumber: 'KYB-SA-33331', oemNumber: '48510-80255', name: 'KYB Excel-G Front Strut Assembly', categoryName: 'Suspension', brandName: 'KYB', unitName: 'Pcs', costPrice: 6500, sellingPrice: 9200, wholesalePrice: 7800, totalStock: 12, minStockAlert: 4 },
-        { id: 5, partNumber: 'MOB-OIL-5W30', oemNumber: 'MOBIL-SYN-4L', name: 'Mobil 1 Fully Synthetic Engine Oil (4L)', categoryName: 'Lubricants', brandName: 'Mobil 1', unitName: 'Pcs', costPrice: 3800, sellingPrice: 5200, wholesalePrice: 4400, totalStock: 38, minStockAlert: 15 },
-      ]);
+      setParts([]);
     } finally {
       setLoading(false);
     }
@@ -69,9 +63,9 @@ export default function PartsList() {
       if (bRes.data?.data) setBrands(bRes.data.data);
       if (uRes.data?.data) setUnits(uRes.data.data);
     } catch {
-      setCategories([{ id: 1, name: 'Brake System' }, { id: 2, name: 'Electrical' }, { id: 3, name: 'Filtration' }, { id: 4, name: 'Suspension' }, { id: 5, name: 'Lubricants' }]);
-      setBrands([{ id: 1, name: 'Bosch' }, { id: 2, name: 'Denso' }, { id: 3, name: 'Mann-Filter' }, { id: 4, name: 'KYB' }, { id: 5, name: 'Mobil 1' }]);
-      setUnits([{ id: 1, shortCode: 'Pcs' }, { id: 2, shortCode: 'Pair' }, { id: 3, shortCode: 'Set' }, { id: 4, shortCode: 'Box' }]);
+      setCategories([]);
+      setBrands([]);
+      setUnits([]);
     }
   };
 

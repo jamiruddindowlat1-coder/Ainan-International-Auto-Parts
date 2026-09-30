@@ -29,31 +29,6 @@ public static class DbInitializer
             await context.SaveChangesAsync();
         }
 
-        // 2. Seed Admin User
-        if (!await context.Users.AnyAsync())
-        {
-            var adminUser = new User
-            {
-                Username = "admin",
-                Email = "admin@aiaps.com",
-                // Hashed password for 'Admin@123'
-                PasswordHash = "AQAAAAEAACcQAAAAEJ8+3f6n4/KzQk/r6Q0tYgN8V5z7u0Z5gqV+Q9l4H8J1zV5m7Y1eT4W6g==",
-                FullName = "System Administrator",
-                Phone = "+880 1700-000001",
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
-            };
-            await context.Users.AddAsync(adminUser);
-            await context.SaveChangesAsync();
-
-            var superAdminRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "SuperAdmin");
-            if (superAdminRole != null)
-            {
-                await context.UserRoles.AddAsync(new UserRole { UserId = adminUser.Id, RoleId = superAdminRole.Id });
-                await context.SaveChangesAsync();
-            }
-        }
-
         // 3. Seed Units
         if (!await context.Units.AnyAsync())
         {

@@ -42,18 +42,8 @@ export default function InventoryList() {
       if (stockRes.data?.data) setStocks(stockRes.data.data);
       if (whRes.data?.data) setWarehouses(whRes.data.data);
     } catch {
-      setStocks([
-        { id: 1, warehouseName: 'Main Central Warehouse', partId: 1, partNumber: 'BOS-BP-001', partName: 'Front Ceramic Brake Pad Set', quantity: 45, rackLocation: 'Rack-A1', binLocation: 'Bin-04' },
-        { id: 2, warehouseName: 'Main Central Warehouse', partId: 2, partNumber: 'DEN-SP-IX01', partName: 'Iridium Spark Plug', quantity: 120, rackLocation: 'Rack-B2', binLocation: 'Bin-12' },
-        { id: 3, warehouseName: 'Main Central Warehouse', partId: 3, partNumber: 'MNN-OF-W68', partName: 'Mann Engine Oil Filter', quantity: 95, rackLocation: 'Rack-C1', binLocation: 'Bin-02' },
-        { id: 4, warehouseName: 'Main Central Warehouse', partId: 4, partNumber: 'KYB-SA-33331', partName: 'KYB Front Strut Assembly', quantity: 2, rackLocation: 'Rack-D3', binLocation: 'Bin-01' },
-        { id: 5, warehouseName: 'Chittagong Port Warehouse', partId: 1, partNumber: 'BOS-BP-001', partName: 'Front Ceramic Brake Pad Set', quantity: 20, rackLocation: 'Rack-CTG-1', binLocation: 'Bin-A' },
-      ]);
-      setWarehouses([
-        { id: 1, name: 'Main Central Warehouse', code: 'WH-MAIN', location: 'Tejgaon, Dhaka' },
-        { id: 2, name: 'Chittagong Port Warehouse', code: 'WH-CTG', location: 'Agrabad, CTG' },
-        { id: 3, name: 'Uttara Showroom & Store', code: 'WH-UTT', location: 'Sector 3, Uttara' }
-      ]);
+      setStocks([]);
+      setWarehouses([]);
     } finally {
       setLoading(false);
     }

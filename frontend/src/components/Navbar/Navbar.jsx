@@ -84,7 +84,7 @@ export default function Navbar({ collapsed }) {
               {user?.fullName || 'Administrator'}
             </span>
             <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-              {user?.roles?.[0] || 'SuperAdmin'}
+              {user?.roles?.[0] || 'No role'}
             </span>
           </div>
         </div>

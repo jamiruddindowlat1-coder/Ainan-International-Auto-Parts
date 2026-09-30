@@ -499,12 +499,6 @@ INSERT INTO Permissions (ModuleName, ActionName, Description) VALUES
 ('Reports', 'View', 'Export and View Business Reports'),
 ('Settings', 'Manage', 'Modify Company and System Settings');
 
--- Default Admin User (Password: Admin@123 -> SHA256 hashed / placeholder)
-INSERT INTO Users (Username, Email, PasswordHash, FullName, Phone, IsActive) VALUES
-('admin', 'admin@aiaps.com', '$2a$11$N4W6K4s5V8R/HqI5YVfAue3QyB6fQdGZ2Y6nL1vXJ7eUoO1zP9KWi', 'System Administrator', '+880 1700-000001', 1);
-
-INSERT INTO UserRoles (UserId, RoleId) VALUES (1, 1);
-
 -- Units
 INSERT INTO Units (Name, ShortCode, IsActive) VALUES
 ('Pieces', 'Pcs', 1),

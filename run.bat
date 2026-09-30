@@ -8,7 +8,7 @@ start "AutoPartsERP Frontend" cmd /k "cd /d D:\AutoPartsERP\frontend && npm run 
 timeout /t 6 /nobreak > nul
 
 start http://localhost:5272/scalar/v1
-start http://localhost:3000/
+start http://localhost:5173/
 
 echo Both servers started.
  

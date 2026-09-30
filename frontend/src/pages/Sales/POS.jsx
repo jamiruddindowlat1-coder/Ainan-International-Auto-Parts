@@ -43,25 +43,9 @@ export default function POS() {
       if (custRes.data?.data) setCustomers(custRes.data.data);
     } catch {
       // Fallback demo data
-      setParts([
-        { id: 1, partNumber: 'BOS-BP-001', name: 'Front Ceramic Brake Pad Set', brandName: 'Bosch', sellingPrice: 3200, totalStock: 45, barcode: '890123450001' },
-        { id: 2, partNumber: 'DEN-SP-IX01', name: 'Iridium Spark Plug (SK20R11)', brandName: 'Denso', sellingPrice: 950, totalStock: 120, barcode: '890123450002' },
-        { id: 3, partNumber: 'MNN-OF-W68', name: 'Mann Engine Oil Filter', brandName: 'Mann-Filter', sellingPrice: 650, totalStock: 95, barcode: '890123450004' },
-        { id: 4, partNumber: 'KYB-SA-33331', name: 'KYB Front Strut Assembly', brandName: 'KYB', sellingPrice: 9200, totalStock: 12, barcode: '890123450005' },
-        { id: 5, partNumber: 'MOB-OIL-5W30', name: 'Mobil 1 Full Synthetic 5W-30 (4L)', brandName: 'Mobil 1', sellingPrice: 5200, totalStock: 38, barcode: '890123450006' },
-      ]);
-      setCategories([
-        { id: 1, name: 'Brake System' },
-        { id: 2, name: 'Electrical' },
-        { id: 3, name: 'Filtration' },
-        { id: 4, name: 'Suspension' },
-        { id: 5, name: 'Lubricants' },
-      ]);
-      setCustomers([
-        { id: 1, name: 'Walk-in Customer (Counter)', phone: '+880 1700-000000' },
-        { id: 2, name: 'Apex Auto Garage', phone: '+880 1812-345678' },
-        { id: 3, name: 'Rahim Motors Wholesale', phone: '+880 1913-987654' },
-      ]);
+      setParts([]);
+      setCategories([]);
+      setCustomers([]);
     }
   };
 

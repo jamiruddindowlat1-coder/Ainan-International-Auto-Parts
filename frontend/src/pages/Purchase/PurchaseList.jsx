@@ -34,11 +34,7 @@ export default function PurchaseList() {
       const res = await api.get('/purchase?pageSize=100');
       if (res.data?.data) setPurchases(res.data.data);
     } catch {
-      setPurchases([
-        { id: 1, invoiceNumber: 'PO-20260825-4011', supplierName: 'Global Auto Parts Dubai', purchaseDate: '2026-08-25', totalAmount: 320000, paidAmount: 200000, dueAmount: 120000, paymentStatus: 'Partial', status: 'Received', items: [{ partNumber: 'BOS-BP-001', partName: 'Brake Pads', quantity: 100, unitPrice: 2200, totalCost: 220000 }, { partNumber: 'MOB-OIL-5W30', partName: 'Engine Oil', quantity: 20, unitPrice: 5000, totalCost: 100000 }] },
-        { id: 2, invoiceNumber: 'PO-20260818-4012', supplierName: 'Nippon Auto Exports Tokyo', purchaseDate: '2026-08-18', totalAmount: 480000, paidAmount: 480000, dueAmount: 0, paymentStatus: 'Paid', status: 'Received', items: [{ partNumber: 'DEN-SP-IX01', partName: 'Spark Plugs', quantity: 500, unitPrice: 650, totalCost: 325000 }] },
-        { id: 3, invoiceNumber: 'PO-20260805-4013', supplierName: 'Bangla Motor Spares Ltd.', purchaseDate: '2026-08-05', totalAmount: 95000, paidAmount: 50000, dueAmount: 45000, paymentStatus: 'Partial', status: 'Received', items: [{ partNumber: 'MNN-OF-W68', partName: 'Oil Filters', quantity: 150, unitPrice: 400, totalCost: 60000 }] },
-      ]);
+      setPurchases([]);
     } finally {
       setLoading(false);
     }
@@ -53,21 +49,14 @@ export default function PurchaseList() {
       if (sRes.data?.data) setSuppliers(sRes.data.data);
       if (pRes.data?.data) setParts(pRes.data.data);
     } catch {
-      setSuppliers([
-        { id: 1, name: 'Global Auto Parts Trading Dubai' },
-        { id: 2, name: 'Nippon Auto Exports Tokyo' },
-        { id: 3, name: 'Bangla Motor Spares Importers' },
-      ]);
-      setParts([
-        { id: 1, partNumber: 'BOS-BP-001', name: 'Front Brake Pad Set', costPrice: 2200 },
-        { id: 2, partNumber: 'DEN-SP-IX01', name: 'Iridium Spark Plug', costPrice: 650 },
-        { id: 3, partNumber: 'MNN-OF-W68', name: 'Mann Oil Filter', costPrice: 400 },
-      ]);
+      setSuppliers([]);
+      setParts([]);
     }
   };
 
   const addPoLine = () => {
-    setPoItems([...poItems, { partId: parts[0]?.id || 1, quantity: 1, unitPrice: parts[0]?.costPrice || 500 }]);
+    if (!parts.length) return;
+    setPoItems([...poItems, { partId: parts[0].id, quantity: 1, unitPrice: parts[0].costPrice || 0 }]);
   };
 
   const removePoLine = (idx) => {

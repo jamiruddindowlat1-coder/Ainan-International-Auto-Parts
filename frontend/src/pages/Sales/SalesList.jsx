@@ -26,11 +26,7 @@ export default function SalesList() {
         setSales(res.data.data);
       }
     } catch {
-      setSales([
-        { id: 1, invoiceNumber: 'INV-20260901-1021', customerName: 'Apex Auto Garage', customerPhone: '+880 1812-345678', saleDate: '2026-09-01', totalAmount: 18500, paidAmount: 18500, dueAmount: 0, paymentStatus: 'Paid', paymentMethod: 'Card', items: [{ partNumber: 'BOS-BP-001', partName: 'Brake Pad Set', quantity: 4, unitPrice: 3200, totalPrice: 12800 }, { partNumber: 'MOB-OIL-5W30', partName: 'Engine Oil', quantity: 1, unitPrice: 5200, totalPrice: 5200 }] },
-        { id: 2, invoiceNumber: 'INV-20260901-1022', customerName: 'Rahim Motors Wholesale', customerPhone: '+880 1913-987654', saleDate: '2026-09-01', totalAmount: 42000, paidAmount: 20000, dueAmount: 22000, paymentStatus: 'Partial', paymentMethod: 'Bank', items: [{ partNumber: 'DEN-SP-IX01', partName: 'Spark Plug', quantity: 40, unitPrice: 950, totalPrice: 38000 }] },
-        { id: 3, invoiceNumber: 'INV-20260901-1023', customerName: 'Walk-in Counter', customerPhone: '-', saleDate: '2026-09-01', totalAmount: 6400, paidAmount: 6400, dueAmount: 0, paymentStatus: 'Paid', paymentMethod: 'Cash', items: [{ partNumber: 'BOS-BP-001', partName: 'Brake Pad Set', quantity: 2, unitPrice: 3200, totalPrice: 6400 }] },
-      ]);
+      setSales([]);
     } finally {
       setLoading(false);
     }

@@ -413,3 +413,7 @@ frontend/dist/
 /get-schema*.ps1
 /schema.sql
 /AutoPartsERP_Source_Guide.pdf
+
+*.bak
+startup-error.txt
+frontend/.env

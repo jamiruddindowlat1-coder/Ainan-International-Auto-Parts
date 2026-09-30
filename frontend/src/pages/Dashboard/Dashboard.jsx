@@ -111,9 +111,6 @@ export default function Dashboard() {
           <div className="stat-info">
             <div className="stat-value">{currency} {summary?.todaySales?.toLocaleString()}</div>
             <div className="stat-label">Today's Total Sales</div>
-            <div className="stat-change up">
-              <FiArrowUpRight /> +14.2% vs yesterday
-            </div>
           </div>
         </div>
 
@@ -124,9 +121,6 @@ export default function Dashboard() {
           <div className="stat-info">
             <div className="stat-value">{currency} {summary?.monthSales?.toLocaleString()}</div>
             <div className="stat-label">This Month Revenue</div>
-            <div className="stat-change up">
-              <FiArrowUpRight /> +8.5% growth
-            </div>
           </div>
         </div>
 

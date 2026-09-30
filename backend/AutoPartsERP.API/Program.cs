@@ -26,7 +26,7 @@ builder.Services.AddScoped<IExportService, ExportService>();
 builder.Services.AddScoped<IAccountingService, AccountingService>();
 
 // 3. Authentication & JWT
-var jwtSecret = builder.Configuration["JwtSettings:Secret"] ?? "AIAPS_Super_Secret_Key_For_AutoPartsERP_2026_Secure_JWT_Key!";
+var jwtSecret = builder.Configuration["JwtSettings:Secret"] ?? throw new InvalidOperationException("JwtSettings:Secret is not configured. Set it with dotnet user-secrets or an environment variable.");
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

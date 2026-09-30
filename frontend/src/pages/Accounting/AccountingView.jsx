@@ -48,20 +48,7 @@ export default function AccountingView() {
       const res = await api.get('/accounting/accounts');
       if (res.data?.data) setAccounts(res.data.data);
     } catch {
-      setAccounts([
-        { id: 1, accountCode: '1010', accountName: 'Cash on Hand', accountType: 'Asset', balance: 150000 },
-        { id: 2, accountCode: '1020', accountName: 'City Bank - Corporate Account', accountType: 'Asset', balance: 850000 },
-        { id: 3, accountCode: '1030', accountName: 'Accounts Receivable (Customers)', accountType: 'Asset', balance: 109500 },
-        { id: 4, accountCode: '1040', accountName: 'Merchandise Inventory', accountType: 'Asset', balance: 780000 },
-        { id: 5, accountCode: '2010', accountName: 'Accounts Payable (Suppliers)', accountType: 'Liability', balance: 515000 },
-        { id: 6, accountCode: '2020', accountName: 'Short Term Loan / Credit', accountType: 'Liability', balance: 200000 },
-        { id: 7, accountCode: '3010', accountName: 'Owner Capital / Equity', accountType: 'Equity', balance: 1000000 },
-        { id: 8, accountCode: '4010', accountName: 'Auto Parts Sales Revenue', accountType: 'Revenue', balance: 685200 },
-        { id: 9, accountCode: '5010', accountName: 'Cost of Goods Sold (COGS)', accountType: 'Expense', balance: 410000 },
-        { id: 10, accountCode: '5020', accountName: 'Showroom & Warehouse Rent', accountType: 'Expense', balance: 35000 },
-        { id: 11, accountCode: '5030', accountName: 'Staff Salaries & Benefits', accountType: 'Expense', balance: 28000 },
-        { id: 12, accountCode: '5040', accountName: 'Electricity & Utilities', accountType: 'Expense', balance: 8500 },
-      ]);
+      setAccounts([]);
     }
   };
 
@@ -89,89 +76,13 @@ export default function AccountingView() {
     } catch {
       // Demo fallbacks for full bookkeeping flow
       if (tab === 'journal') {
-        setJournalEntries([
-          {
-            id: 1,
-            entryNumber: 'JV-20260901-1001',
-            entryDate: '2026-09-01',
-            description: 'Cash received from Apex Auto Garage',
-            referenceNumber: 'REC-0842',
-            totalAmount: 18500,
-            items: [
-              { accountCode: '1010', accountName: 'Cash on Hand', debit: 18500, credit: 0 },
-              { accountCode: '1030', accountName: 'Accounts Receivable', debit: 0, credit: 18500 }
-            ]
-          },
-          {
-            id: 2,
-            entryNumber: 'JV-20260901-1002',
-            entryDate: '2026-09-01',
-            description: 'Supplier payment for brake pads shipment',
-            referenceNumber: 'CHQ-5544',
-            totalAmount: 50000,
-            items: [
-              { accountCode: '2010', accountName: 'Accounts Payable', debit: 50000, credit: 0 },
-              { accountCode: '1020', accountName: 'City Bank Account', debit: 0, credit: 50000 }
-            ]
-          }
-        ]);
+        setJournalEntries([]);
       } else if (tab === 'trial_balance') {
-        setTrialBalance({
-          totalDebit: 1889500,
-          totalCredit: 1889500,
-          isBalanced: true,
-          accounts: [
-            { accountCode: '1010', accountName: 'Cash on Hand', accountType: 'Asset', debit: 150000, credit: 0 },
-            { accountCode: '1020', accountName: 'City Bank - Corporate Account', accountType: 'Asset', debit: 850000, credit: 0 },
-            { accountCode: '1030', accountName: 'Accounts Receivable (Customers)', accountType: 'Asset', debit: 109500, credit: 0 },
-            { accountCode: '1040', accountName: 'Merchandise Inventory', accountType: 'Asset', debit: 780000, credit: 0 },
-            { accountCode: '2010', accountName: 'Accounts Payable (Suppliers)', accountType: 'Liability', debit: 0, credit: 515000 },
-            { accountCode: '2020', accountName: 'Short Term Loan / Credit', accountType: 'Liability', debit: 0, credit: 200000 },
-            { accountCode: '3010', accountName: 'Owner Capital / Equity', accountType: 'Equity', debit: 0, credit: 1000000 },
-            { accountCode: '4010', accountName: 'Auto Parts Sales Revenue', accountType: 'Revenue', debit: 0, credit: 685200 },
-            { accountCode: '5010', accountName: 'Cost of Goods Sold (COGS)', accountType: 'Expense', debit: 410000, credit: 0 },
-            { accountCode: '5020', accountName: 'Showroom & Warehouse Rent', accountType: 'Expense', debit: 35000, credit: 0 },
-            { accountCode: '5030', accountName: 'Staff Salaries & Benefits', accountType: 'Expense', debit: 28000, credit: 0 },
-            { accountCode: '5040', accountName: 'Electricity & Utilities', accountType: 'Expense', debit: 8500, credit: 0 },
-          ]
-        });
+        setTrialBalance({ totalDebit: 0, totalCredit: 0, isBalanced: true, accounts: [] });
       } else if (tab === 'profit_loss') {
-        setProfitLoss({
-          totalRevenue: 685200,
-          totalExpenses: 481500,
-          netProfitLoss: 203700,
-          revenues: [
-            { accountCode: '4010', accountName: 'Auto Parts Sales Revenue', amount: 685200 }
-          ],
-          expenses: [
-            { accountCode: '5010', accountName: 'Cost of Goods Sold (COGS)', amount: 410000 },
-            { accountCode: '5020', accountName: 'Showroom & Warehouse Rent', amount: 35000 },
-            { accountCode: '5030', accountName: 'Staff Salaries & Benefits', amount: 28000 },
-            { accountCode: '5040', accountName: 'Electricity & Utilities', amount: 8500 },
-          ]
-        });
+        setProfitLoss({ totalRevenue: 0, totalExpenses: 0, netProfitLoss: 0, revenues: [], expenses: [] });
       } else if (tab === 'balance_sheet') {
-        setBalanceSheet({
-          totalAssets: 1889500,
-          totalLiabilities: 715000,
-          totalEquity: 1203700,
-          netIncomeRetained: 203700,
-          totalLiabilitiesAndEquity: 1889500,
-          isBalanced: true,
-          assets: [
-            { accountCode: '1010', accountName: 'Cash on Hand', balance: 150000 },
-            { accountCode: '1020', accountName: 'City Bank - Corporate Account', balance: 850000 },
-            { accountCode: '1030', accountName: 'Accounts Receivable (Customers)', balance: 109500 },
-            { accountCode: '1040', accountName: 'Merchandise Inventory', balance: 780000 },
-          ],
-          liabilities: [
-            { accountCode: '2010', accountName: 'Accounts Payable (Suppliers)', balance: 515000 },
-            { accountCode: '2020', accountName: 'Short Term Loan / Credit', balance: 200000 },
-          ],
-          equity: [
-            { accountCode: '3010', accountName: 'Owner Capital / Equity', balance: 1000000 },
-          ]
-        });
+        setBalanceSheet({ totalAssets: 0, totalLiabilities: 0, totalEquity: 0, netIncomeRetained: 0, totalLiabilitiesAndEquity: 0, isBalanced: true, assets: [], liabilities: [], equity: [] });
       }
     } finally {
       setLoading(false);
@@ -184,23 +95,13 @@ export default function AccountingView() {
       if (res.data?.data) setLedgerData(res.data.data);
     } catch {
       const acc = accounts.find(a => a.id === Number(accId)) || accounts[0];
-      setLedgerData({
-        accountCode: acc?.accountCode || '1010',
-        accountName: acc?.accountName || 'Cash on Hand',
-        accountType: acc?.accountType || 'Asset',
-        currentBalance: acc?.balance || 150000,
-        entries: [
-          { entryNumber: 'JV-20260901-1001', entryDate: '2026-09-01', description: 'Cash received from customer', debit: 18500, credit: 0, balance: 168500 },
-          { entryNumber: 'EXP-20260901-101', entryDate: '2026-09-01', description: 'Paid warehouse rent in cash', debit: 0, credit: 35000, balance: 133500 },
-          { entryNumber: 'INV-20260901-1023', entryDate: '2026-09-01', description: 'POS Counter cash sale', debit: 6400, credit: 0, balance: 139900 },
-        ]
-      });
+      setLedgerData({ accountCode: acc?.accountCode || '', accountName: acc?.accountName || '', accountType: acc?.accountType || '', currentBalance: acc?.balance || 0, entries: [] });
     }
   };
 
   // Journal Line helper
   const addJournalLine = () => {
-    setJournalLines([...journalLines, { accountId: accounts[0]?.id || 1, debit: '', credit: '', description: '' }]);
+    setJournalLines([...journalLines, { accountId: accounts[0]?.id || '', debit: '', credit: '', description: '' }]);
   };
 
   const removeJournalLine = (idx) => {
@@ -240,26 +141,7 @@ export default function AccountingView() {
       setIsJournalModalOpen(false);
       loadActiveTabData('journal');
     } catch {
-      setJournalEntries([
-        {
-          id: Date.now(),
-          entryNumber: 'JV-' + Math.floor(1000 + Math.random()*9000),
-          entryDate: new Date().toISOString(),
-          description: journalDesc || 'General Journal Entry',
-          totalAmount: sumDebit,
-          items: journalLines.map(l => {
-            const acc = accounts.find(a => a.id === Number(l.accountId));
-            return {
-              accountCode: acc?.accountCode || '-',
-              accountName: acc?.accountName || '-',
-              debit: Number(l.debit || 0),
-              credit: Number(l.credit || 0),
-            };
-          })
-        },
-        ...journalEntries
-      ]);
-      setIsJournalModalOpen(false);
+      alert('Journal entry could not be saved. Please check the server connection and try again.');
     }
   };
 

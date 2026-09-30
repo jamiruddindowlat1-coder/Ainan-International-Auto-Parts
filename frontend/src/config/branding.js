@@ -48,7 +48,7 @@ const branding = {
     googleFontsUrl: "https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap",
   },
   sidebar: { width: "260px", collapsedWidth: "72px", showLogo: true, showCompanyName: true },
-  defaultCurrency: { code: "BDT", symbol: "&#2547;", name: "Bangladeshi Taka" },
+  defaultCurrency: { code: "BDT", symbol: "\u09F3", name: "Bangladeshi Taka" },
   document: {
     showLogo: true,
     showCompanyName: true,

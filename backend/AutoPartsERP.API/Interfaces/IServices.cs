@@ -1,11 +1,13 @@
 using AutoPartsERP.API.DTOs;
 using AutoPartsERP.API.DTOs.Common;
+using AutoPartsERP.API.Models.Auth;
 
 namespace AutoPartsERP.API.Interfaces;
 
 public interface IAuthService
 {
     Task<ApiResponse<LoginResponseDto>> LoginAsync(LoginRequestDto request);
+    Task<ApiResponse<LoginResponseDto>> GoogleLoginAsync(GoogleLoginRequestDto request);
     Task<ApiResponse<UserDto>> RegisterAsync(RegisterUserDto request);
     Task<ApiResponse<List<UserDto>>> GetAllUsersAsync();
 }
@@ -46,3 +48,6 @@ public interface IExportService
     byte[] ExportPartsToExcel(IEnumerable<PartDto> parts);
     byte[] ExportSalesToExcel(IEnumerable<SalesInvoiceDto> sales);
 }
+
+
+
