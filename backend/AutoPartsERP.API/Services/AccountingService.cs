@@ -66,7 +66,7 @@ public class AccountingService : IAccountingService
     {
         var expense = new Expense
         {
-            ExpenseNumber = dto.ExpenseNumber ?? "EXP-" + DateTime.Now.Ticks,
+            ExpenseNumber = string.IsNullOrWhiteSpace(dto.ExpenseNumber) ? "EXP-" + DateTime.Now.Ticks : dto.ExpenseNumber,
             ExpenseCategoryId = dto.ExpenseCategoryId,
             Amount = dto.Amount,
             ExpenseDate = dto.ExpenseDate == default ? DateTime.UtcNow : dto.ExpenseDate,
@@ -212,4 +212,5 @@ public class AccountingService : IAccountingService
         return ApiResponse<object>.Ok(reportData);
     }
 }
+
 
