@@ -2,7 +2,7 @@
 
 # Ainan International Auto Parts System (AIAPS)
 
-A full-stack POS and ERP platform for auto parts retailers, wholesalers and importers, built with ASP.NET Core (.NET 8), React and SQL Server.
+A full-stack POS and ERP platform for auto parts retailers, wholesalers and importers, built with ASP.NET Core (.NET 10), React and SQL Server.
 
 ## Showcase
 
@@ -11,7 +11,7 @@ A full-stack POS and ERP platform for auto parts retailers, wholesalers and impo
 
 ## Tech Stack
 
-- **Backend:** ASP.NET Core Web API (.NET 8), Entity Framework Core, SQL Server, JWT Authentication, BCrypt, Swagger/OpenAPI
+- **Backend:** ASP.NET Core Web API (.NET 10), Entity Framework Core, SQL Server, JWT Authentication, BCrypt, Swagger/OpenAPI
 - **Frontend:** React 18, Vite, React Router, Recharts, Axios
 
 ## Modules
@@ -58,4 +58,5 @@ npm run dev
 **Mohammed Jamir Uddin**
 Full-Stack Software Developer (.NET Core and React)
 jamiruddindowlat1@gmail.com
+
 
