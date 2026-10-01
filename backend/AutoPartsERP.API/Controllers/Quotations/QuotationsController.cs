@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using AutoPartsERP.API.Data;
 using AutoPartsERP.API.DTOs;
 using AutoPartsERP.API.DTOs.Common;
-using AutoPartsERP.API.Models.Sales;
+using AutoPartsERP.API.Interfaces;
 
 namespace AutoPartsERP.API.Controllers.Quotations;
 
@@ -14,10 +14,12 @@ namespace AutoPartsERP.API.Controllers.Quotations;
 public class QuotationsController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly IQuotationService _service;
 
-    public QuotationsController(AppDbContext context)
+    public QuotationsController(AppDbContext context, IQuotationService service)
     {
         _context = context;
+        _service = service;
     }
 
     [HttpGet]
@@ -36,20 +38,9 @@ public class QuotationsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ApiResponse<QuotationDto>>> CreateQuotation([FromBody] QuotationDto dto)
+    public async Task<ActionResult<ApiResponse<QuotationResultDto>>> CreateQuotation([FromBody] CreateQuotationDto dto)
     {
-        var quotation = new Quotation
-        {
-            QuotationNumber = string.IsNullOrWhiteSpace(dto.QuotationNumber) ? "QT-" + DateTime.Now.Ticks : dto.QuotationNumber,
-            CustomerId = dto.CustomerId,
-            TotalAmount = dto.TotalAmount,
-            CreatedAt = dto.QuotationDate == default ? DateTime.UtcNow : dto.QuotationDate,
-            ExpiryDate = DateTime.UtcNow.AddDays(30)
-        };
-        await _context.Quotations.AddAsync(quotation);
-        await _context.SaveChangesAsync();
-        dto.Id = quotation.Id;
-        return Ok(ApiResponse<QuotationDto>.Ok(dto));
+        var result = await _service.CreateAsync(dto);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
 }
-
