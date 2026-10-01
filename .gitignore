@@ -419,3 +419,5 @@ startup-error.txt
 frontend/.env
 
 jwt-secret.txt
+
+.env
