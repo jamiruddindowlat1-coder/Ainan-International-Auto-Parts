@@ -29,6 +29,7 @@ builder.Services.AddScoped<IPurchaseReturnService, PurchaseReturnService>();
 builder.Services.AddScoped<IAccountingPostingService, AccountingPostingService>();
 builder.Services.AddScoped<IQuotationService, QuotationService>();
 builder.Services.AddScoped<IPartnerService, PartnerService>();
+builder.Services.AddScoped<IWarehouseService, WarehouseService>();
 
 // 3. Authentication & JWT
 var jwtSecret = builder.Configuration["JwtSettings:Secret"] ?? throw new InvalidOperationException("JwtSettings:Secret is not configured. Set it with dotnet user-secrets or an environment variable.");

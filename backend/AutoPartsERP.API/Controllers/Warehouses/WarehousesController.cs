@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using AutoPartsERP.API.Data;
 using AutoPartsERP.API.DTOs;
 using AutoPartsERP.API.DTOs.Common;
-using AutoPartsERP.API.Models.Inventory;
+using AutoPartsERP.API.Interfaces;
 
 namespace AutoPartsERP.API.Controllers.Warehouses;
 
@@ -14,10 +14,12 @@ namespace AutoPartsERP.API.Controllers.Warehouses;
 public class WarehousesController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly IWarehouseService _service;
 
-    public WarehousesController(AppDbContext context)
+    public WarehousesController(AppDbContext context, IWarehouseService service)
     {
         _context = context;
+        _service = service;
     }
 
     [HttpGet]
@@ -38,18 +40,17 @@ public class WarehousesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ApiResponse<WarehouseDto>>> CreateWarehouse([FromBody] WarehouseDto dto)
     {
-        var warehouse = new Warehouse
-        {
-            Name = dto.Name,
-            Code = dto.Code,
-            Location = dto.Location,
-            IsActive = dto.IsActive,
-            CreatedAt = DateTime.UtcNow
-        };
-        await _context.Warehouses.AddAsync(warehouse);
-        await _context.SaveChangesAsync();
-        dto.Id = warehouse.Id;
-        return Ok(ApiResponse<WarehouseDto>.Ok(dto));
+        var result = await _service.CreateAsync(dto);
+        return result.Success ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<ApiResponse<WarehouseDto>>> UpdateWarehouse(int id, [FromBody] WarehouseDto dto)
+    {
+        if (!await _context.Warehouses.AnyAsync(w => w.Id == id))
+            return NotFound(ApiResponse<WarehouseDto>.Fail("Warehouse not found"));
+
+        var result = await _service.UpdateAsync(id, dto);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
 }
-
