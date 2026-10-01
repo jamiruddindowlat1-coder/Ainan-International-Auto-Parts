@@ -1,27 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using AutoPartsERP.API.Data;
+using AutoPartsERP.API.DTOs;
 using AutoPartsERP.API.DTOs.Common;
+using AutoPartsERP.API.Interfaces;
 using AutoPartsERP.API.Models.Accounting;
 
 namespace AutoPartsERP.API.Controllers.Accounting;
-
-public class CreateJournalEntryRequest
-{
-    public string? Description { get; set; }
-    public string? ReferenceNumber { get; set; }
-    public DateTime? EntryDate { get; set; }
-    public List<JournalItemInput> Items { get; set; } = new();
-}
-
-public class JournalItemInput
-{
-    public int AccountId { get; set; }
-    public decimal Debit { get; set; }
-    public decimal Credit { get; set; }
-    public string? Description { get; set; }
-}
 
 [Authorize]
 [ApiController]
@@ -29,10 +16,12 @@ public class JournalItemInput
 public class AccountingController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly IAccountingPostingService _posting;
 
-    public AccountingController(AppDbContext context)
+    public AccountingController(AppDbContext context, IAccountingPostingService posting)
     {
         _context = context;
+        _posting = posting;
     }
 
     // 1. Chart of Accounts
@@ -78,61 +67,10 @@ public class AccountingController : ControllerBase
     }
 
     [HttpPost("journal")]
-    public async Task<ActionResult<ApiResponse<object>>> CreateJournalEntry([FromBody] CreateJournalEntryRequest req)
+    public async Task<ActionResult<ApiResponse<JournalPostResultDto>>> CreateJournalEntry([FromBody] PostJournalEntryDto dto)
     {
-        if (req.Items == null || req.Items.Count < 2)
-            return BadRequest(ApiResponse<object>.Fail("A journal entry requires at least two lines (Debit and Credit)."));
-
-        var totalDebit = req.Items.Sum(i => i.Debit);
-        var totalCredit = req.Items.Sum(i => i.Credit);
-
-        if (totalDebit <= 0 || totalCredit <= 0)
-            return BadRequest(ApiResponse<object>.Fail("Debit and Credit amounts must be greater than zero."));
-
-        if (Math.Round(totalDebit, 2) != Math.Round(totalCredit, 2))
-            return BadRequest(ApiResponse<object>.Fail($"Journal is out of balance! Total Debit ({totalDebit}) must equal Total Credit ({totalCredit})."));
-
-        var entryNo = "JV-" + DateTime.UtcNow.ToString("yyyyMMdd") + "-" + Guid.NewGuid().ToString("N")[..8].ToUpper();
-
-        var journalEntry = new JournalEntry
-        {
-            EntryNumber = entryNo,
-            EntryDate = req.EntryDate ?? DateTime.UtcNow,
-            ReferenceNumber = req.ReferenceNumber,
-            Description = req.Description,
-            TotalAmount = totalDebit,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        foreach (var item in req.Items)
-        {
-            var account = await _context.Accounts.FindAsync(item.AccountId);
-            if (account == null)
-                return BadRequest(ApiResponse<object>.Fail($"Account ID {item.AccountId} not found"));
-
-            journalEntry.Items.Add(new JournalItem
-            {
-                AccountId = item.AccountId,
-                Debit = item.Debit,
-                Credit = item.Credit,
-                Description = item.Description ?? req.Description
-            });
-
-            // Update Account Balance based on type (Debit Normal: Asset/Expense; Credit Normal: Liability/Equity/Revenue)
-            if (account.AccountType == "Asset" || account.AccountType == "Expense")
-            {
-                account.Balance += (item.Debit - item.Credit);
-            }
-            else
-            {
-                account.Balance += (item.Credit - item.Debit);
-            }
-        }
-
-        await _context.JournalEntries.AddAsync(journalEntry);
-        await _context.SaveChangesAsync();
-
-        return Ok(ApiResponse<object>.Ok(new { journalEntry.Id, journalEntry.EntryNumber, journalEntry.TotalAmount }, "Journal Entry posted successfully"));
+        var result = await _posting.PostJournalEntryAsync(dto, CurrentUserId());
+        return result.Success ? Ok(result) : BadRequest(result);
     }
 
     // 3. General Ledger (খতিয়ান)
@@ -347,16 +285,12 @@ public class AccountingController : ControllerBase
     }
 
     [HttpPost("expenses")]
-    public async Task<ActionResult<ApiResponse<Expense>>> CreateExpense([FromBody] Expense exp)
+    public async Task<ActionResult<ApiResponse<ExpenseResultDto>>> CreateExpense([FromBody] RecordExpenseDto dto)
     {
-        exp.ExpenseNumber = "EXP-" + DateTime.UtcNow.ToString("yyyyMMdd") + "-" + Guid.NewGuid().ToString("N")[..8].ToUpper();
-        exp.CreatedAt = DateTime.UtcNow;
-        exp.ExpenseDate = DateTime.UtcNow;
-
-        await _context.Expenses.AddAsync(exp);
-        await _context.SaveChangesAsync();
-
-        return Ok(ApiResponse<Expense>.Ok(exp, "Expense recorded successfully"));
+        var result = await _posting.RecordExpenseAsync(dto, CurrentUserId());
+        return result.Success ? Ok(result) : BadRequest(result);
     }
-}
 
+    private int? CurrentUserId() =>
+        int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : null;
+}
