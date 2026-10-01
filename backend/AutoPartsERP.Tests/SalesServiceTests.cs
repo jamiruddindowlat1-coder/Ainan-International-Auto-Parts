@@ -117,4 +117,52 @@ public class SalesServiceTests
         Assert.False(result.Success);
         Assert.Equal(10, context.WarehouseStocks.Single().Quantity);
     }
+
+    [Fact]
+    public async Task CreateSale_ZeroQuantity_Fails()
+    {
+        using var context = NewContext();
+        var result = await new SalesService(context).CreateSaleAsync(NewDto(0, 0, 0), 1);
+        Assert.False(result.Success);
+    }
+
+    [Fact]
+    public async Task CreateSale_DiscountOver100_Fails()
+    {
+        using var context = NewContext();
+        var result = await new SalesService(context).CreateSaleAsync(NewDto(1, 150, 0), 1);
+        Assert.False(result.Success);
+    }
+
+    [Fact]
+    public async Task CreateSale_UnknownCustomer_Fails()
+    {
+        using var context = NewContext();
+        var dto = NewDto(1, 0, 0);
+        dto.CustomerId = 999;
+        var result = await new SalesService(context).CreateSaleAsync(dto, 1);
+        Assert.False(result.Success);
+        Assert.Empty(context.SalesInvoices);
+    }
+
+    [Fact]
+    public async Task CreateSale_UnknownWarehouse_Fails()
+    {
+        using var context = NewContext();
+        var dto = NewDto(1, 0, 0);
+        dto.WarehouseId = 999;
+        var result = await new SalesService(context).CreateSaleAsync(dto, 1);
+        Assert.False(result.Success);
+    }
+
+    [Fact]
+    public async Task CreateSale_DiscountAmountExceedsTotal_Fails()
+    {
+        using var context = NewContext();
+        var dto = NewDto(1, 0, 0);
+        dto.DiscountAmount = 5000;
+        var result = await new SalesService(context).CreateSaleAsync(dto, 1);
+        Assert.False(result.Success);
+        Assert.Empty(context.SalesInvoices);
+    }
 }

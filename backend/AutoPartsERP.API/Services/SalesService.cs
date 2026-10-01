@@ -149,6 +149,22 @@ public class SalesService : ISalesService
         if (!dto.Items.Any())
             return ApiResponse<SalesInvoiceDto>.Fail("Invoice must contain at least one item");
 
+        if (!await _context.Warehouses.AnyAsync(w => w.Id == dto.WarehouseId))
+            return ApiResponse<SalesInvoiceDto>.Fail($"Warehouse ID {dto.WarehouseId} not found");
+
+        if (!await _context.Customers.AnyAsync(c => c.Id == dto.CustomerId))
+            return ApiResponse<SalesInvoiceDto>.Fail($"Customer ID {dto.CustomerId} not found");
+
+        foreach (var check in dto.Items)
+        {
+            if (check.Quantity <= 0)
+                return ApiResponse<SalesInvoiceDto>.Fail("Quantity must be greater than zero");
+            if (check.UnitPrice < 0)
+                return ApiResponse<SalesInvoiceDto>.Fail("Unit price cannot be negative");
+            if (check.DiscountPercent < 0 || check.DiscountPercent > 100)
+                return ApiResponse<SalesInvoiceDto>.Fail("Discount percent must be between 0 and 100");
+        }
+
         var invoiceNo = "INV-" + DateTime.UtcNow.ToString("yyyyMMdd") + "-" + Guid.NewGuid().ToString("N")[..8].ToUpper();
         decimal subTotal = 0;
 
@@ -197,6 +213,8 @@ public class SalesService : ISalesService
         }
 
         var totalAmount = subTotal - dto.DiscountAmount + dto.TaxAmount;
+        if (totalAmount < 0)
+            return ApiResponse<SalesInvoiceDto>.Fail("Discount cannot exceed the invoice total");
         var dueAmount = totalAmount - dto.PaidAmount;
         var paymentStatus = dueAmount <= 0 ? "Paid" : (dto.PaidAmount > 0 ? "Partial" : "Due");
 
