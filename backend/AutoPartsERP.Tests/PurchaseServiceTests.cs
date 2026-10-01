@@ -199,4 +199,18 @@ public class PurchaseServiceTests
 
         Assert.False(result.Success);
     }
-}
+
+    [Fact]
+    public async Task CreatePurchase_InactiveWarehouse_FailsAndKeepsStock()
+    {
+        using var context = NewContext();
+        context.Warehouses.Single(w => w.Id == 1).IsActive = false;
+        context.SaveChanges();
+
+        var result = await new PurchaseService(context).CreatePurchaseAsync(NewDto(5, 70, 0), 1);
+
+        Assert.False(result.Success);
+        Assert.Equal(10, context.WarehouseStocks.Single().Quantity);
+        Assert.Empty(context.PurchaseInvoices);
+        Assert.Empty(context.StockMovements);
+    }}

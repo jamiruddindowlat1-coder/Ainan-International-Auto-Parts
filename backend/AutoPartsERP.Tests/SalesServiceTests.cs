@@ -165,4 +165,18 @@ public class SalesServiceTests
         Assert.False(result.Success);
         Assert.Empty(context.SalesInvoices);
     }
-}
+
+    [Fact]
+    public async Task CreateSale_InactiveWarehouse_FailsAndKeepsStock()
+    {
+        using var context = NewContext();
+        context.Warehouses.Single(w => w.Id == 1).IsActive = false;
+        context.SaveChanges();
+
+        var result = await new SalesService(context).CreateSaleAsync(NewDto(1, 0, 0), 1);
+
+        Assert.False(result.Success);
+        Assert.Equal(10, context.WarehouseStocks.Single().Quantity);
+        Assert.Empty(context.SalesInvoices);
+        Assert.Empty(context.StockMovements);
+    }}
