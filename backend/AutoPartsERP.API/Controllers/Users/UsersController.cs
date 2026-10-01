@@ -78,6 +78,8 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ApiResponse<UserDto>>> CreateUser([FromBody] RegisterUserDto dto)
     {
+        if (string.IsNullOrWhiteSpace(dto.Password)) return BadRequest(ApiResponse<UserDto>.Fail("Password is required"));
+
         if (await _context.Users.AnyAsync(u => u.Username == dto.Username || u.Email == dto.Email))
         {
             return BadRequest(ApiResponse<UserDto>.Fail("Username or Email already exists"));
@@ -89,7 +91,7 @@ public class UsersController : ControllerBase
             Email = dto.Email,
             FullName = dto.FullName,
             Phone = dto.Phone,
-            PasswordHash = "AQAAAAEAACcQAAAAEJ8+3f6n4/KzQk/r6Q0tYgN8V5z7u0Z5gqV+Q9l4H8J1zV5m7Y1eT4W6g==", // Default hash like in AuthService
+            PasswordHash = string.Empty,
             IsActive = true,
             CreatedAt = DateTime.UtcNow
         };
@@ -99,6 +101,7 @@ public class UsersController : ControllerBase
             user.UserRoles.Add(new UserRole { RoleId = roleId });
         }
 
+        user.PasswordHash = new Microsoft.AspNetCore.Identity.PasswordHasher<User>().HashPassword(user, dto.Password);
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
 
