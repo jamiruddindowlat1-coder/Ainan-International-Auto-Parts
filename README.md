@@ -1,4 +1,6 @@
-﻿# Ainan International Auto Parts System (AIAPS)
+![CI](https://github.com/jamiruddindowlat1-coder/Ainan-International-Auto-Parts/actions/workflows/ci.yml/badge.svg)
+
+# Ainan International Auto Parts System (AIAPS)
 
 A full-stack POS and ERP platform for auto parts retailers, wholesalers and importers, built with ASP.NET Core (.NET 8), React and SQL Server.
 
@@ -56,3 +58,4 @@ npm run dev
 **Mohammed Jamir Uddin**
 Full-Stack Software Developer (.NET Core and React)
 jamiruddindowlat1@gmail.com
+
