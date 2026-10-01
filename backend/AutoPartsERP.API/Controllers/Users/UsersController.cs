@@ -102,7 +102,9 @@ public class UsersController : ControllerBase
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, ApiResponse<UserDto>.Ok(null, "User created successfully"));
+        var roleNames = await _context.Roles.Where(r => dto.RoleIds.Contains(r.Id)).Select(r => r.Name).ToListAsync();
+        var created = new UserDto { Id = user.Id, Username = user.Username, Email = user.Email, FullName = user.FullName, Phone = user.Phone, IsActive = user.IsActive, CreatedAt = user.CreatedAt, Roles = roleNames };
+        return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, ApiResponse<UserDto>.Ok(created, "User created successfully"));
     }
 
     [HttpPut("{id:int}")]
