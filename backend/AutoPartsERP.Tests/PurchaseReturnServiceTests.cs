@@ -1,4 +1,4 @@
-using AutoPartsERP.API.Data;
+﻿using AutoPartsERP.API.Data;
 using AutoPartsERP.API.DTOs;
 using AutoPartsERP.API.Models.Catalog;
 using AutoPartsERP.API.Models.Inventory;
@@ -202,4 +202,19 @@ public class PurchaseReturnServiceTests
         Assert.Equal(0, context.Suppliers.Single().CurrentBalance);
         Assert.Equal(90, result.Data!.CashRefund);
     }
-}
+
+    [Fact]
+    public async Task Return_InactiveWarehouse_FailsAndKeepsStockAndBalance()
+    {
+        using var context = NewContext();
+        var id = await BuyAsync(context, 0);   // balance 350, stock 5
+        context.Warehouses.Single(w => w.Id == 1).IsActive = false;
+        context.SaveChanges();
+
+        var result = await new PurchaseReturnService(context).CreateAsync(ReturnDto(id, 2), 1);
+
+        Assert.False(result.Success);
+        Assert.Equal(5, context.WarehouseStocks.Single().Quantity);
+        Assert.Equal(350, context.Suppliers.Single().CurrentBalance);
+        Assert.Empty(context.PurchaseReturns);
+    }}
