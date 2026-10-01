@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using AutoPartsERP.API.Data;
 using AutoPartsERP.API.DTOs;
 using AutoPartsERP.API.DTOs.Common;
@@ -35,7 +35,7 @@ public class AccountingService : IAccountingService
     {
         var income = new Income
         {
-            IncomeNumber = dto.IncomeNumber ?? "INC-" + DateTime.Now.Ticks,
+            IncomeNumber = string.IsNullOrWhiteSpace(dto.IncomeNumber) ? "INC-" + DateTime.Now.Ticks : dto.IncomeNumber,
             Source = dto.Source,
             Amount = dto.Amount,
             IncomeDate = dto.IncomeDate == default ? DateTime.UtcNow : dto.IncomeDate,
@@ -212,3 +212,4 @@ public class AccountingService : IAccountingService
         return ApiResponse<object>.Ok(reportData);
     }
 }
+

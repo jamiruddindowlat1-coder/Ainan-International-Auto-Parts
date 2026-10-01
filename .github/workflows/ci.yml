@@ -18,6 +18,8 @@ jobs:
         run: dotnet restore backend/AutoPartsERP.API/AutoPartsERP.API.csproj
       - name: Build
         run: dotnet build backend/AutoPartsERP.API/AutoPartsERP.API.csproj --no-restore -c Release
+      - name: Test
+        run: dotnet test backend/AutoPartsERP.Tests/AutoPartsERP.Tests.csproj -c Release
       - name: Build Docker image
         run: docker build -t autopartserp-api backend/AutoPartsERP.API
 
