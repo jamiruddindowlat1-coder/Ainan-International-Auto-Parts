@@ -149,7 +149,7 @@ public class SalesService : ISalesService
         if (!dto.Items.Any())
             return ApiResponse<SalesInvoiceDto>.Fail("Invoice must contain at least one item");
 
-        var invoiceNo = "INV-" + DateTime.UtcNow.ToString("yyyyMMdd") + "-" + new Random().Next(1000, 9999);
+        var invoiceNo = "INV-" + DateTime.UtcNow.ToString("yyyyMMdd") + "-" + Guid.NewGuid().ToString("N")[..8].ToUpper();
         decimal subTotal = 0;
 
         var salesItems = new List<SalesItem>();

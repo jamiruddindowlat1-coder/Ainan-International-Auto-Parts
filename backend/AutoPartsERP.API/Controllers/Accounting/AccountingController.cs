@@ -92,7 +92,7 @@ public class AccountingController : ControllerBase
         if (Math.Round(totalDebit, 2) != Math.Round(totalCredit, 2))
             return BadRequest(ApiResponse<object>.Fail($"Journal is out of balance! Total Debit ({totalDebit}) must equal Total Credit ({totalCredit})."));
 
-        var entryNo = "JV-" + DateTime.UtcNow.ToString("yyyyMMdd") + "-" + new Random().Next(1000, 9999);
+        var entryNo = "JV-" + DateTime.UtcNow.ToString("yyyyMMdd") + "-" + Guid.NewGuid().ToString("N")[..8].ToUpper();
 
         var journalEntry = new JournalEntry
         {
@@ -349,7 +349,7 @@ public class AccountingController : ControllerBase
     [HttpPost("expenses")]
     public async Task<ActionResult<ApiResponse<Expense>>> CreateExpense([FromBody] Expense exp)
     {
-        exp.ExpenseNumber = "EXP-" + DateTime.UtcNow.ToString("yyyyMMdd") + "-" + new Random().Next(100, 999);
+        exp.ExpenseNumber = "EXP-" + DateTime.UtcNow.ToString("yyyyMMdd") + "-" + Guid.NewGuid().ToString("N")[..8].ToUpper();
         exp.CreatedAt = DateTime.UtcNow;
         exp.ExpenseDate = DateTime.UtcNow;
 

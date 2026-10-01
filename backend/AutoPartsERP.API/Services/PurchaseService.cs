@@ -134,7 +134,7 @@ public class PurchaseService : IPurchaseService
     {
         if (!dto.Items.Any()) return ApiResponse<PurchaseInvoiceDto>.Fail("Purchase must contain at least one item");
 
-        var invoiceNo = "PO-" + DateTime.UtcNow.ToString("yyyyMMdd") + "-" + new Random().Next(1000, 9999);
+        var invoiceNo = "PO-" + DateTime.UtcNow.ToString("yyyyMMdd") + "-" + Guid.NewGuid().ToString("N")[..8].ToUpper();
         decimal subTotal = 0;
         var purchaseItems = new List<PurchaseItem>();
 
