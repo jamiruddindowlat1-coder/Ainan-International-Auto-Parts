@@ -417,3 +417,5 @@ frontend/dist/
 *.bak
 startup-error.txt
 frontend/.env
+
+jwt-secret.txt

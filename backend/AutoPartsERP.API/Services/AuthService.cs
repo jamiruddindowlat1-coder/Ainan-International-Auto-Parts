@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Google.Apis.Auth;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using AutoPartsERP.API.Data;
@@ -17,6 +18,7 @@ public class AuthService : IAuthService
 
     private readonly AppDbContext _context;
     private readonly IConfiguration _config;
+    private readonly PasswordHasher<User> _hasher = new();
 
     public AuthService(AppDbContext context, IConfiguration config)
     {
@@ -36,8 +38,19 @@ public class AuthService : IAuthService
             return ApiResponse<LoginResponseDto>.Fail("Invalid username or password");
         }
 
-        // Simple password check or bcrypt verification (matches demo seed admin)
-        bool isValid = false; // Password login disabled: use Google sign-in until proper hashing is implemented
+        // Password check using ASP.NET Core Identity PasswordHasher
+        bool isValid;
+        try
+        {
+            var verify = _hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
+            isValid = verify != PasswordVerificationResult.Failed;
+        }
+        catch (FormatException)
+        {
+            // Stored hash is not a valid Identity hash (e.g. Google-only account)
+            isValid = false;
+        }
+
         if (!isValid)
         {
             return ApiResponse<LoginResponseDto>.Fail("Invalid username or password");
@@ -150,14 +163,17 @@ public class AuthService : IAuthService
             Email = request.Email,
             FullName = request.FullName,
             Phone = request.Phone,
-            PasswordHash = "AQAAAAEAACcQAAAAEJ8+3f6n4/KzQk/r6Q0tYgN8V5z7u0Z5gqV+Q9l4H8J1zV5m7Y1eT4W6g==",
             IsActive = true,
             CreatedAt = DateTime.UtcNow
         };
 
+        // Real password hash (replaces the old fixed placeholder hash)
+        user.PasswordHash = _hasher.HashPassword(user, request.Password);
+
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
 
+        var roleNames = new List<string>();
         if (request.RoleIds.Any())
         {
             foreach (var roleId in request.RoleIds)
@@ -165,6 +181,11 @@ public class AuthService : IAuthService
                 await _context.UserRoles.AddAsync(new UserRole { UserId = user.Id, RoleId = roleId });
             }
             await _context.SaveChangesAsync();
+
+            roleNames = await _context.Roles
+                .Where(r => request.RoleIds.Contains(r.Id))
+                .Select(r => r.Name)
+                .ToListAsync();
         }
 
         return ApiResponse<UserDto>.Ok(new UserDto
@@ -175,6 +196,7 @@ public class AuthService : IAuthService
             FullName = user.FullName,
             Phone = user.Phone,
             IsActive = user.IsActive,
+            Roles = roleNames,
             CreatedAt = user.CreatedAt
         }, "User registered successfully");
     }
