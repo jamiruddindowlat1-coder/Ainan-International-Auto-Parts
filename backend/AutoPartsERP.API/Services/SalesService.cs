@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using AutoPartsERP.API.Data;
 using AutoPartsERP.API.DTOs;
 using AutoPartsERP.API.DTOs.Common;
@@ -176,11 +176,11 @@ public class SalesService : ISalesService
             var stock = await _context.WarehouseStocks
                 .FirstOrDefaultAsync(ws => ws.WarehouseId == dto.WarehouseId && ws.PartId == it.PartId);
 
-            if (stock != null)
-            {
-                stock.Quantity -= it.Quantity;
-                stock.LastUpdated = DateTime.UtcNow;
-            }
+            if (stock == null || stock.Quantity < it.Quantity)
+                return ApiResponse<SalesInvoiceDto>.Fail($"Insufficient stock for part ID {it.PartId}");
+
+            stock.Quantity -= it.Quantity;
+            stock.LastUpdated = DateTime.UtcNow;
 
             // Log Stock Movement
             await _context.StockMovements.AddAsync(new StockMovement
