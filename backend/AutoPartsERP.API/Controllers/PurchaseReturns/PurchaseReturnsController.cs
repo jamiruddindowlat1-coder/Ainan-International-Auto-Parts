@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using AutoPartsERP.API.Data;
 using AutoPartsERP.API.DTOs;
 using AutoPartsERP.API.DTOs.Common;
-using AutoPartsERP.API.Models.Purchase;
+using AutoPartsERP.API.Interfaces;
 
 namespace AutoPartsERP.API.Controllers.PurchaseReturns;
 
@@ -14,16 +15,18 @@ namespace AutoPartsERP.API.Controllers.PurchaseReturns;
 public class PurchaseReturnsController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly IPurchaseReturnService _service;
 
-    public PurchaseReturnsController(AppDbContext context)
+    public PurchaseReturnsController(AppDbContext context, IPurchaseReturnService service)
     {
         _context = context;
+        _service = service;
     }
 
     [HttpGet]
     public async Task<ActionResult<ApiResponse<List<PurchaseReturnDto>>>> GetPurchaseReturns()
     {
-            var list = await _context.PurchaseReturns.AsNoTracking()
+        var list = await _context.PurchaseReturns.AsNoTracking()
             .Select(pr => new PurchaseReturnDto
             {
                 Id = pr.Id,
@@ -35,21 +38,10 @@ public class PurchaseReturnsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ApiResponse<PurchaseReturnDto>>> CreatePurchaseReturn([FromBody] PurchaseReturnDto dto)
+    public async Task<ActionResult<ApiResponse<PurchaseReturnResultDto>>> CreatePurchaseReturn([FromBody] CreatePurchaseReturnDto dto)
     {
-        var pr = new PurchaseReturn
-        {
-            ReturnNumber = string.IsNullOrWhiteSpace(dto.ReturnNumber) ? "PR-" + DateTime.Now.Ticks : dto.ReturnNumber,
-            SupplierId = dto.SupplierId,
-            TotalRefundAmount = dto.TotalAmount,
-            WarehouseId = 1, // default for demo
-
-            ReturnDate = DateTime.UtcNow
-        };
-        await _context.PurchaseReturns.AddAsync(pr);
-        await _context.SaveChangesAsync();
-        dto.Id = pr.Id;
-        return Ok(ApiResponse<PurchaseReturnDto>.Ok(dto));
+        int? userId = int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : null;
+        var result = await _service.CreateAsync(dto, userId);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
 }
-
