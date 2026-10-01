@@ -28,8 +28,11 @@ public class SalesReturnService : ISalesReturnService
         if (dto.Items.GroupBy(i => i.PartId).Any(g => g.Count() > 1))
             return ApiResponse<SalesReturnResultDto>.Fail("Each part may appear only once in a return");
 
-        if (!await _context.Warehouses.AnyAsync(w => w.Id == dto.WarehouseId))
+        var warehouse = await _context.Warehouses.FirstOrDefaultAsync(w => w.Id == dto.WarehouseId);
+        if (warehouse == null)
             return ApiResponse<SalesReturnResultDto>.Fail($"Warehouse ID {dto.WarehouseId} not found");
+        if (!warehouse.IsActive)
+            return ApiResponse<SalesReturnResultDto>.Fail("Warehouse is inactive");
 
         var invoice = await _context.SalesInvoices
             .Include(i => i.Items)

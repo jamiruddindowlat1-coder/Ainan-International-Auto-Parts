@@ -134,8 +134,11 @@ public class PurchaseService : IPurchaseService
     {
         if (!dto.Items.Any()) return ApiResponse<PurchaseInvoiceDto>.Fail("Purchase must contain at least one item");
 
-        if (!await _context.Warehouses.AnyAsync(w => w.Id == dto.WarehouseId))
+        var warehouse = await _context.Warehouses.FirstOrDefaultAsync(w => w.Id == dto.WarehouseId);
+        if (warehouse == null)
             return ApiResponse<PurchaseInvoiceDto>.Fail($"Warehouse ID {dto.WarehouseId} not found");
+        if (!warehouse.IsActive)
+            return ApiResponse<PurchaseInvoiceDto>.Fail("Warehouse is inactive");
 
         if (!await _context.Suppliers.AnyAsync(s => s.Id == dto.SupplierId))
             return ApiResponse<PurchaseInvoiceDto>.Fail($"Supplier ID {dto.SupplierId} not found");

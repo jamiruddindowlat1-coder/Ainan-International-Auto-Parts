@@ -149,8 +149,11 @@ public class SalesService : ISalesService
         if (!dto.Items.Any())
             return ApiResponse<SalesInvoiceDto>.Fail("Invoice must contain at least one item");
 
-        if (!await _context.Warehouses.AnyAsync(w => w.Id == dto.WarehouseId))
+        var warehouse = await _context.Warehouses.FirstOrDefaultAsync(w => w.Id == dto.WarehouseId);
+        if (warehouse == null)
             return ApiResponse<SalesInvoiceDto>.Fail($"Warehouse ID {dto.WarehouseId} not found");
+        if (!warehouse.IsActive)
+            return ApiResponse<SalesInvoiceDto>.Fail("Warehouse is inactive");
 
         if (!await _context.Customers.AnyAsync(c => c.Id == dto.CustomerId))
             return ApiResponse<SalesInvoiceDto>.Fail($"Customer ID {dto.CustomerId} not found");

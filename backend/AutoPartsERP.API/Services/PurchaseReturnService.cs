@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using AutoPartsERP.API.Data;
 using AutoPartsERP.API.DTOs;
 using AutoPartsERP.API.DTOs.Common;
@@ -28,8 +28,11 @@ public class PurchaseReturnService : IPurchaseReturnService
         if (dto.Items.GroupBy(i => i.PartId).Any(g => g.Count() > 1))
             return ApiResponse<PurchaseReturnResultDto>.Fail("Each part may appear only once in a return");
 
-        if (!await _context.Warehouses.AnyAsync(w => w.Id == dto.WarehouseId))
+        var warehouse = await _context.Warehouses.FirstOrDefaultAsync(w => w.Id == dto.WarehouseId);
+        if (warehouse == null)
             return ApiResponse<PurchaseReturnResultDto>.Fail($"Warehouse ID {dto.WarehouseId} not found");
+        if (!warehouse.IsActive)
+            return ApiResponse<PurchaseReturnResultDto>.Fail("Warehouse is inactive");
 
         var invoice = await _context.PurchaseInvoices
             .Include(i => i.Items)
