@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using AutoPartsERP.API.Data;
 using AutoPartsERP.API.DTOs;
 using AutoPartsERP.API.DTOs.Common;
@@ -134,6 +134,23 @@ public class PurchaseService : IPurchaseService
     {
         if (!dto.Items.Any()) return ApiResponse<PurchaseInvoiceDto>.Fail("Purchase must contain at least one item");
 
+        if (!await _context.Warehouses.AnyAsync(w => w.Id == dto.WarehouseId))
+            return ApiResponse<PurchaseInvoiceDto>.Fail($"Warehouse ID {dto.WarehouseId} not found");
+
+        if (!await _context.Suppliers.AnyAsync(s => s.Id == dto.SupplierId))
+            return ApiResponse<PurchaseInvoiceDto>.Fail($"Supplier ID {dto.SupplierId} not found");
+
+        if (dto.DiscountAmount < 0 || dto.TaxAmount < 0 || dto.ShippingCost < 0 || dto.PaidAmount < 0)
+            return ApiResponse<PurchaseInvoiceDto>.Fail("Discount, tax, shipping and paid amounts cannot be negative");
+
+        foreach (var check in dto.Items)
+        {
+            if (check.Quantity <= 0)
+                return ApiResponse<PurchaseInvoiceDto>.Fail("Quantity must be greater than zero");
+            if (check.UnitPrice <= 0)
+                return ApiResponse<PurchaseInvoiceDto>.Fail("Unit price must be greater than zero");
+        }
+
         var invoiceNo = "PO-" + DateTime.UtcNow.ToString("yyyyMMdd") + "-" + Guid.NewGuid().ToString("N")[..8].ToUpper();
         decimal subTotal = 0;
         var purchaseItems = new List<PurchaseItem>();
@@ -192,6 +209,8 @@ public class PurchaseService : IPurchaseService
         }
 
         var totalAmount = subTotal - dto.DiscountAmount + dto.TaxAmount + dto.ShippingCost;
+        if (totalAmount < 0)
+            return ApiResponse<PurchaseInvoiceDto>.Fail("Discount cannot exceed the invoice total");
         var dueAmount = totalAmount - dto.PaidAmount;
         var paymentStatus = dueAmount <= 0 ? "Paid" : (dto.PaidAmount > 0 ? "Partial" : "Due");
 
