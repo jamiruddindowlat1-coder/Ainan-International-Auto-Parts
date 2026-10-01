@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using AutoPartsERP.API.Data;
 using AutoPartsERP.API.DTOs;
 using AutoPartsERP.API.DTOs.Common;
-using AutoPartsERP.API.Models.Partners;
+using AutoPartsERP.API.Interfaces;
 
 namespace AutoPartsERP.API.Controllers.Suppliers;
 
@@ -14,10 +14,12 @@ namespace AutoPartsERP.API.Controllers.Suppliers;
 public class SuppliersController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly IPartnerService _service;
 
-    public SuppliersController(AppDbContext context)
+    public SuppliersController(AppDbContext context, IPartnerService service)
     {
         _context = context;
+        _service = service;
     }
 
     [HttpGet]
@@ -73,25 +75,18 @@ public class SuppliersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ApiResponse<SupplierDto>>> CreateSupplier([FromBody] SupplierDto dto)
     {
-        var supplier = new Supplier
-        {
-            Name = dto.Name,
-            Company = dto.Company,
-            Phone = dto.Phone,
-            Email = dto.Email,
-            Address = dto.Address,
-            TaxNumber = dto.TaxNumber,
-            OpeningBalance = 0,
-            CurrentBalance = 0,
-            IsActive = true,
-            CreatedAt = DateTime.UtcNow
-        };
+        var result = await _service.CreateSupplierAsync(dto);
+        if (!result.Success) return BadRequest(result);
+        return CreatedAtAction(nameof(GetSupplierById), new { id = result.Data!.Id }, result);
+    }
 
-        await _context.Suppliers.AddAsync(supplier);
-        await _context.SaveChangesAsync();
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<ApiResponse<SupplierDto>>> UpdateSupplier(int id, [FromBody] SupplierDto dto)
+    {
+        if (!await _context.Suppliers.AnyAsync(s => s.Id == id))
+            return NotFound(ApiResponse<SupplierDto>.Fail("Supplier not found"));
 
-        dto.Id = supplier.Id;
-        return CreatedAtAction(nameof(GetSupplierById), new { id = supplier.Id }, ApiResponse<SupplierDto>.Ok(dto, "Supplier created successfully"));
+        var result = await _service.UpdateSupplierAsync(id, dto);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
 }
-

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using AutoPartsERP.API.Data;
 using AutoPartsERP.API.DTOs;
 using AutoPartsERP.API.DTOs.Common;
-using AutoPartsERP.API.Models.Partners;
+using AutoPartsERP.API.Interfaces;
 
 namespace AutoPartsERP.API.Controllers.Partners;
 
@@ -14,10 +14,12 @@ namespace AutoPartsERP.API.Controllers.Partners;
 public class CustomersController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly IPartnerService _service;
 
-    public CustomersController(AppDbContext context)
+    public CustomersController(AppDbContext context, IPartnerService service)
     {
         _context = context;
+        _service = service;
     }
 
     [HttpGet]
@@ -73,43 +75,18 @@ public class CustomersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ApiResponse<CustomerDto>>> CreateCustomer([FromBody] CustomerDto dto)
     {
-        var customer = new Customer
-        {
-            Name = dto.Name,
-            CustomerType = dto.CustomerType,
-            Phone = dto.Phone,
-            Email = dto.Email,
-            Address = dto.Address,
-            CreditLimit = dto.CreditLimit,
-            OpeningBalance = 0,
-            CurrentBalance = 0,
-            IsActive = true,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        await _context.Customers.AddAsync(customer);
-        await _context.SaveChangesAsync();
-
-        dto.Id = customer.Id;
-        return CreatedAtAction(nameof(GetCustomerById), new { id = customer.Id }, ApiResponse<CustomerDto>.Ok(dto, "Customer created successfully"));
+        var result = await _service.CreateCustomerAsync(dto);
+        if (!result.Success) return BadRequest(result);
+        return CreatedAtAction(nameof(GetCustomerById), new { id = result.Data!.Id }, result);
     }
 
     [HttpPut("{id:int}")]
     public async Task<ActionResult<ApiResponse<CustomerDto>>> UpdateCustomer(int id, [FromBody] CustomerDto dto)
     {
-        var customer = await _context.Customers.FindAsync(id);
-        if (customer == null) return NotFound(ApiResponse<CustomerDto>.Fail("Customer not found"));
+        if (!await _context.Customers.AnyAsync(c => c.Id == id))
+            return NotFound(ApiResponse<CustomerDto>.Fail("Customer not found"));
 
-        customer.Name = dto.Name;
-        customer.CustomerType = dto.CustomerType;
-        customer.Phone = dto.Phone;
-        customer.Email = dto.Email;
-        customer.Address = dto.Address;
-        customer.CreditLimit = dto.CreditLimit;
-        customer.IsActive = dto.IsActive;
-
-        await _context.SaveChangesAsync();
-        return Ok(ApiResponse<CustomerDto>.Ok(dto, "Customer updated successfully"));
+        var result = await _service.UpdateCustomerAsync(id, dto);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
 }
-
