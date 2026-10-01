@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using AutoPartsERP.API.Data;
 using AutoPartsERP.API.DTOs;
 using AutoPartsERP.API.DTOs.Common;
-using AutoPartsERP.API.Models.Sales;
+using AutoPartsERP.API.Interfaces;
 
 namespace AutoPartsERP.API.Controllers.SalesReturns;
 
@@ -14,10 +15,12 @@ namespace AutoPartsERP.API.Controllers.SalesReturns;
 public class SalesReturnsController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly ISalesReturnService _service;
 
-    public SalesReturnsController(AppDbContext context)
+    public SalesReturnsController(AppDbContext context, ISalesReturnService service)
     {
         _context = context;
+        _service = service;
     }
 
     [HttpGet]
@@ -35,20 +38,10 @@ public class SalesReturnsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ApiResponse<SalesReturnDto>>> CreateSalesReturn([FromBody] SalesReturnDto dto)
+    public async Task<ActionResult<ApiResponse<SalesReturnResultDto>>> CreateSalesReturn([FromBody] CreateSalesReturnDto dto)
     {
-        var sr = new SalesReturn
-        {
-            ReturnNumber = string.IsNullOrWhiteSpace(dto.ReturnNumber) ? "SR-" + DateTime.Now.Ticks : dto.ReturnNumber,
-            CustomerId = dto.CustomerId,
-            TotalRefundAmount = dto.TotalAmount,
-            WarehouseId = 1, // default
-            ReturnDate = DateTime.UtcNow
-        };
-        await _context.SalesReturns.AddAsync(sr);
-        await _context.SaveChangesAsync();
-        dto.Id = sr.Id;
-        return Ok(ApiResponse<SalesReturnDto>.Ok(dto));
+        int? userId = int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : null;
+        var result = await _service.CreateAsync(dto, userId);
+        return result.Success ? Ok(result) : BadRequest(result);
     }
 }
-
